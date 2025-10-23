@@ -1,0 +1,23 @@
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+
+# Env files
+.env
+.env.*
+
+# Docker
+*.log
+
+# Local Firebolt Core data
+firebolt-core-data/
+
+# Node/npm (if any)
+node_modules/
