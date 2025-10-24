@@ -35,7 +35,7 @@ echo "Done."
 EOF
 
 # Make it executable
-chmod +x firebolt/init_debug.sh
+chmod +x firebolt/init.sh
 
 # Run the debug version
-bash firebolt/init_debug.sh
+bash firebolt/init.sh
