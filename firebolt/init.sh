@@ -1,3 +1,4 @@
+# Create a debug version of init.sh
 #!/usr/bin/env bash
 set -euo pipefail
 
@@ -7,14 +8,34 @@ TABLE=${FIREBOLT_TABLE:-demo_events}
 
 run_sql() {
   local sql="$1"
-  curl -sS "${FIREBOLT_CORE_URL_BASE}?database=${DB}" --data-binary "$sql" >/dev/null
+  echo "Executing: $sql"
+  curl -sS "${FIREBOLT_CORE_URL_BASE}?database=${DB}" --data-binary "$sql"
+  echo ""
 }
 
 echo "Creating database $DB if not exists..."
-# CREATE DATABASE must run without database param
-curl -sS "${FIREBOLT_CORE_URL_BASE}" --data-binary "CREATE DATABASE IF NOT EXISTS \"$DB\";" >/dev/null
+echo "Executing: CREATE DATABASE IF NOT EXISTS \"$DB\";"
+curl -sS "${FIREBOLT_CORE_URL_BASE}" --data-binary "CREATE DATABASE IF NOT EXISTS \"$DB\";"
+echo ""
 
 echo "Creating table $DB.$TABLE if not exists..."
-run_sql "CREATE TABLE IF NOT EXISTS \"$TABLE\" (\n  event_id INT,\n  user_id INT,\n  event_type TEXT,\n  event_ts TEXT,\n  payload TEXT\n);"
+# Fixed SQL without \n characters and with PRIMARY INDEX
+run_sql "CREATE TABLE IF NOT EXISTS \"$TABLE\" (
+  event_id INT,
+  user_id INT,
+  event_type TEXT,
+  event_ts TEXT,
+  payload TEXT
+) PRIMARY INDEX event_id;"
+
+echo "Verifying table creation..."
+run_sql "SHOW TABLES;"
 
 echo "Done."
+EOF
+
+# Make it executable
+chmod +x firebolt/init_debug.sh
+
+# Run the debug version
+bash firebolt/init_debug.sh
